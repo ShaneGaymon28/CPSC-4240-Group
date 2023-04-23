@@ -18,6 +18,11 @@ def monitor_usage(app_name, cpu_threshold, memory_threshold):
 
             print("CPU usage: " + str(cpu_usage) + "%" + " | " + "Memory usage: " + str(memory_usage) + "%" , end='\r')
 
+            exit_code = input("\ntype exit to quit\n")
+            if exit_code == "exit":
+                sys.exit()
+
+
         except StopIteration:
             print("Error: " + app_name + " not found.")
             sys.exit()
@@ -25,4 +30,4 @@ def monitor_usage(app_name, cpu_threshold, memory_threshold):
         time.sleep(1)
 
 if __name__ == "__main__":
-    monitor_usage("chrome.exe", 50, 80)
+    monitor_usage("atom", 50, 80)
