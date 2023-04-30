@@ -1,33 +1,27 @@
-import psutil
-import time
 import sys
-from colorama import Fore, Style
+import appUsage
+import sysCpu
+import sysMem
 
-def monitor_usage(app_name, cpu_threshold, memory_threshold):
+def app_menu():
     while True:
-        try:
-            process = next(process for process in psutil.process_iter() if process.name() == app_name)
-            cpu_usage = process.cpu_percent()
-            memory_usage = process.memory_percent()
+        print("Welcome!\n")
+        print("\t1. Application Monitor")
+        print("\t2. System CPU Monitor")
+        print("\t3. System Memory Monitor")
+        print("\t4. Exit\n")
 
-            if cpu_usage > cpu_threshold:
-                print(Fore.RED + "Warning: CPU usage too high - " + str(cpu_usage) + "%" + Style.RESET_ALL, end='\r')
+        choice = input("Enter the number: ")
 
-            if memory_usage > memory_threshold:
-                print(Fore.RED + "Warning: Memory usage too high - " + str(memory_usage) + "%" + Style.RESET_ALL, end='\r')
+        if choice == "1":
+            # figure something out for this
+            appUsage.monitor_cpu("atom", 50, 80)
+        elif choice == "2":
+            sysCpu.menu()
+        elif choice == "3":
+            sysMem.menu()
+        elif choice == "4":
+            print("Exiting app...")
+            break
 
-            print("CPU usage: " + str(cpu_usage) + "%" + " | " + "Memory usage: " + str(memory_usage) + "%" , end='\r')
-
-            exit_code = input("\ntype exit to quit\n")
-            if exit_code == "exit":
-                sys.exit()
-
-
-        except StopIteration:
-            print("Error: " + app_name + " not found.")
-            sys.exit()
-
-        time.sleep(1)
-
-if __name__ == "__main__":
-    monitor_usage("atom", 50, 80)
+app_menu()
