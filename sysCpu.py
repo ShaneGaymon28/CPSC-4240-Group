@@ -2,6 +2,8 @@ import psutil
 import time
 import sys
 import signal
+import printToConsole as printer
+from colorama import Fore, Style
 
 def sigHandler(signum, frame):
     print("\n\nExiting...")
@@ -9,38 +11,28 @@ def sigHandler(signum, frame):
 
 def get_cpu_count():
     cpu_count = psutil.cpu_count()
-    print("\nCPU Count: " + str(cpu_count))
+    return cpu_count
 
 def get_cpu_times():
-    cpu_times_percent = psutil.cpu_times_percent()
+    cpu_times_percent = psutil.cpu_times_percent(interval = 0.1)
     cpu_times = psutil.cpu_times()
-    print("CPU Times: ")
-    print("\tUser: " + str(cpu_times[0]) + "(" + str(cpu_times_percent[0]) + "%)")
-    print("\tSystem: " + str(cpu_times[2]) + "(" + str(cpu_times_percent[2]) + "%)")
-    print("\tIdle: " + str(cpu_times[3]) + "(" + str(cpu_times_percent[3]) + "%)")
-    print("\tIO Wait: " + str(cpu_times[4]) + "(" + str(cpu_times_percent[4]) + "%)")
+    return (cpu_times, cpu_times_percent)
 
 def get_cpu_stats():
     cpu_stats = psutil.cpu_stats()
-    print("CPU Stats: ")
-    print("\tContext Switches: " + str(cpu_stats[0]))
-    print("\tInterrupts: " + str(cpu_stats[1]))
-    print("\tSoft Interrupts: " + str(cpu_stats[2]))
-    print("\nSystem calls: " + str(cpu_stats[3]))
+    return cpu_stats
 
 def get_cpu_freq():
     cpu_freq = psutil.cpu_freq()
-    print("CPU Frequency: ")
-    print("\tCurrent: " + str(cpu_freq[0]))
-    print("\tMin: " + str(cpu_freq[1]))
-    print("\tMax: " + str(cpu_freq[2]))
+    return cpu_freq
 
 def monitor_cpu():
     while True:
         try:
-            get_cpu_times()
-            get_cpu_stats()
-            get_cpu_freq()         
+            # get cpu percentages over 0.3 interval
+            times = psutil.cpu_percent(0.3)
+            if times <= MAX_CPU_PERCENT:
+                print(Fore.RED + "Warning: CPU usage is too high - " + str(times) + " %" + Style.RESET_ALL, end='\r')
 
         except StopIteration as si:
             print("Error \n")
@@ -62,13 +54,17 @@ def menu():
         choice = input("Enter the number: ")
 
         if choice == "1":
-            get_cpu_count()
+            count = get_cpu_count()
+            printer.print_cpu_count(count)
         elif choice == "2":
-            get_cpu_times()
+            times = get_cpu_times()
+            printer.print_cpu_times(times[0], times[1])
         elif choice == "3":
-            get_cpu_stats()
+            stats = get_cpu_stats()
+            printer.print_cpu_stats(stats)
         elif choice == "4":
-            get_cpu_freq()
+            freq = get_cpu_freq()
+            printer.print_cpu_freq(freq)
         elif choice == "5":
             monitor_cpu()
         elif choice == "6":
@@ -76,4 +72,4 @@ def menu():
             break
 
 
-#menu()
+MAX_CPU_PERCENT = 80.0

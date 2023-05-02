@@ -9,7 +9,6 @@ def monitor_usage(app_name, cpu_threshold, memory_threshold):
             process = next(process for process in psutil.process_iter() if process.name() == app_name)
             cpu_usage = process.cpu_percent()
             memory_usage = process.memory_percent()
-            print("cpu_usage: " + cpu_usage + " \nmemory_usage: " + memory_usage + "\n")
 
             if cpu_usage > cpu_threshold:
                 print(Fore.RED + "Warning: CPU usage too high - " + str(cpu_usage) + "%" + Style.RESET_ALL, end='\r')

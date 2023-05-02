@@ -2,6 +2,8 @@ import psutil
 import time
 import sys
 import signal
+import printToConsole as printer
+from colorama import Fore, Style
 
 def sigHandler(signum, frame):
     print("\n\nExiting...")
@@ -9,55 +11,31 @@ def sigHandler(signum, frame):
 
 def get_virtual_memory():
     virtual_memory = psutil.virtual_memory()
-    print("\nVirtual Memory: ")
-    print("\tTotal: " + str(round(virtual_memory[0]/1024/1024, 2)) + " MB")
-    print("\tAvailable: " + str(round(virtual_memory[1]/1024/1024, 2)) + " MB")
-    print("\tPercentage: " + str(virtual_memory[2]) + " %")
-    print("\tUsed: " + str(round(virtual_memory[3]/1024/1024, 2)) + " MB")
-    print("\tActive: " + str(round(virtual_memory[5]/1024/1024, 2)) + " MB")
-    print("\tInactive: " + str(round(virtual_memory[6]/1024/1024, 2)) + " MB")
-    print("\tCached: " + str(round(virtual_memory[8]/1024/1024, 2)) + " MB") 
+    return virtual_memory
 
 def get_swap():
     swap_memory = psutil.swap_memory()
-    print("\nSwap Memory: ")
-    print("\tTotal: " + str(round(swap_memory[0]/1024/1024, 2)) + " MB")
-    print("\tUsed: " + str(round(swap_memory[1]/1024/1024, 2)) + " MB")
-    print("\tFree: " + str(round(swap_memory[2]/1024/1024, 2)) + " MB")
-    print("\tPercentage: " + str(round(swap_memory[3]/1024/1024, 2)) + " MB")
+    return swap_memory
 
 def get_disk_partitions():
     disk_partitions = psutil.disk_partitions()
-    num_partitions = len(disk_partitions)
-    cur_partition_num = 1
-    print("\nDisk Partitions: ")
-    for x in range(num_partitions):
-        print("\t" + str(cur_partition_num) + ". " + str(disk_partitions[x][0]))
-        print("\t\tMount Point: " + str(disk_partitions[x][1]))
-        cur_partition_num += 1
+    return disk_partitions
 
 def get_disk_usage():
     get_disk_partitions()
     path = input("\nEnter the Path of the Partition: ")
     try:
         disk_usage = psutil.disk_usage(path)
-        print("\nDisk Usage for " + path)
-        print("\tTotal: " + str(round(disk_usage[0]/1024/1024, 2)) + " MB")
-        print("\tUsed: " + str(round(disk_usage[1]/1024/1024, 2)) + " MB")
-        print("\tFree: " + str(round(disk_usage[2]/1024/1024, 2)) + " MB")
-        print("\tPercentage: " + str(disk_usage[3]) + " %")
 
     except OSError:
         print("Invalid path - Exiting...")
         sys.exit()
 
+    return (disk_usage, path)
+
 def get_disk_io():
     disk_io = psutil.disk_io_counters()
-    print("\nDisk I/O Statistics: ")
-    print("\t# Reads: " + str(disk_io[0]))
-    print("\t# Writes: " + str(disk_io[1]))
-    print("\tBytes read: " + str(disk_io[2]) + " bytes (" + str(round(disk_io[2]/1024/1024, 2)) + " MB)")
-    print("\tBytes written: " + str(disk_io[3]) + " bytes (" + str(round(disk_io[3]/1024/1024, 2)) + " MB)")
+    return disk_io
 
 
 def monitor_memory():
@@ -65,12 +43,18 @@ def monitor_memory():
     total_time = 0
     while True:
         try:
-            print("\nIteration #" + str(num_iterations))
-            print("Elapsed Time: " + str(total_time) + " seconds")
+            vm = get_virtual_memory()
+            swap = get_swap()            
+            
+            if vm[2] >= MAX_VM_PERCENT:
+                print(Fore.RED + "Warning: Virtual Memory usage is too high - ")
+                printer.print_virtual_memory(vm)
+                print(Style.RESET_ALL, end='\r')
 
-            get_virtual_memory()
-            get_swap()
-            get_disk_io()            
+            if swap[3] >= MAX_SWAP_PERCENT:
+                print(Fore.RED + "Warning: Swap Memory usage is too high - ")
+                printer.print_swap_memory(swap)
+                print(Style.RESET_ALL, end='\r')            
 
         except StopIteration:
             print("\nError...")
@@ -96,15 +80,20 @@ def menu():
         choice = input("Enter the number: ")
 
         if choice == "1":
-            get_virtual_memory()
+            vm = get_virtual_memory()
+            printer.print_virtual_memory(vm)
         elif choice == "2":
-            get_swap()
+            swap = get_swap()
+            printer.print_swap_memory(swap)
         elif choice == "3":
-            get_disk_partitions()
+            dp = get_disk_partitions()
+            printer.print_disk_partitions(dp)
         elif choice == "4":
-            get_disk_usage() # change to ask user in function for path
+            du = get_disk_usage() # change to ask user in function for path
+            printer.print_disk_usage(du[0], du[1])
         elif choice == "5":
-            get_disk_io()
+            io = get_disk_io()
+            printer.print_disk_io(io)
         elif choice == "6":
             monitor_memory()
         elif choice == "7":
@@ -112,4 +101,5 @@ def menu():
             break
 
 
-#menu()
+MAX_VM_PERCENT = 85.0
+MAX_SWAP_PERCENT = 75.0
