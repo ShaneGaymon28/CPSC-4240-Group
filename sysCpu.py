@@ -31,13 +31,13 @@ def monitor_cpu():
         try:
             # get cpu percentages over 0.3 interval
             times = psutil.cpu_percent(0.3)
-            if times <= MAX_CPU_PERCENT:
+            if times >= MAX_CPU_PERCENT:
                 print(Fore.RED + "Warning: CPU usage is too high - " + str(times) + " %" + Style.RESET_ALL, end='\r')
 
         except StopIteration as si:
             print("Error \n")
             sys.exit()
-        
+
         signal.signal(signal.SIGINT, sigHandler)
         time.sleep(1)
 

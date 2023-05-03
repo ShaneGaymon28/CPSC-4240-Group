@@ -31,7 +31,7 @@ def print_virtual_memory(virtual_memory):
     print("\tUsed: " + str(round(virtual_memory[3]/1024/1024, 2)) + " MB")
     print("\tActive: " + str(round(virtual_memory[5]/1024/1024, 2)) + " MB")
     print("\tInactive: " + str(round(virtual_memory[6]/1024/1024, 2)) + " MB")
-    print("\tCached: " + str(round(virtual_memory[8]/1024/1024, 2)) + " MB") 
+    print("\tCached: " + str(round(virtual_memory[8]/1024/1024, 2)) + " MB")
 
 def print_swap_memory(swap_memory):
     print("\nSwap Memory: ")
@@ -62,4 +62,3 @@ def print_disk_io(disk_io):
     print("\t# Writes: " + str(disk_io[1]))
     print("\tBytes read: " + str(disk_io[2]) + " bytes (" + str(round(disk_io[2]/1024/1024, 2)) + " MB)")
     print("\tBytes written: " + str(disk_io[3]) + " bytes (" + str(round(disk_io[3]/1024/1024, 2)) + " MB)")
-

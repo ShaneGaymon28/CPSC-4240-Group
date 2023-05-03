@@ -14,7 +14,8 @@ def app_menu():
         choice = input("Enter the number: ")
 
         if choice == "1":
-            appUsage.monitor_cpu("atom", 50, 80)
+            app = input("Enter the application name: ")
+            appUsage.monitor_usage(app, 50, 80)
         elif choice == "2":
             sysCpu.menu() # show the system cpu stats menu
         elif choice == "3":

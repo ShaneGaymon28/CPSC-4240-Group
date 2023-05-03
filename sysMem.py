@@ -44,8 +44,8 @@ def monitor_memory():
     while True:
         try:
             vm = get_virtual_memory()
-            swap = get_swap()            
-            
+            swap = get_swap()
+
             if vm[2] >= MAX_VM_PERCENT:
                 print(Fore.RED + "Warning: Virtual Memory usage is too high - ")
                 printer.print_virtual_memory(vm)
@@ -54,7 +54,7 @@ def monitor_memory():
             if swap[3] >= MAX_SWAP_PERCENT:
                 print(Fore.RED + "Warning: Swap Memory usage is too high - ")
                 printer.print_swap_memory(swap)
-                print(Style.RESET_ALL, end='\r')            
+                print(Style.RESET_ALL, end='\r')
 
         except StopIteration:
             print("\nError...")
