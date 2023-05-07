@@ -89,7 +89,7 @@ def menu():
             dp = get_disk_partitions()
             printer.print_disk_partitions(dp)
         elif choice == "4":
-            du = get_disk_usage() # change to ask user in function for path
+            du = get_disk_usage() 
             printer.print_disk_usage(du[0], du[1])
         elif choice == "5":
             io = get_disk_io()
