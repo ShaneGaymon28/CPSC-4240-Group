@@ -12,6 +12,10 @@ For this project, we were asked to develop an open source tool (command-line or 
   
 
 ## Running the Program
+
+Currently this app only supports Linux environments. 
+
+Run the script by typing `python main.py`
  
 
 ## Contributors
